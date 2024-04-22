@@ -1,11 +1,40 @@
+from enum import Enum
+import logging
 import math
 import numpy as np
 
-from typing import Callable, List
+from typing import Callable, List, Literal
 from node import Node, compare
 
 
-def sampleParams(nodes: List[Node], size: int) -> List[List[float]]:
+class SampleAlgo(Enum):
+    proportional = "proportional"
+    constant = "constant"
+
+sample_algo = Literal[SampleAlgo.proportional, SampleAlgo.constant]
+
+SampleFunc = Callable[[List[Node], int],  List[List[float]]]
+
+EvalFunc = Callable[[float], float]
+
+
+def sampleAlgoFromEnum(name: sample_algo) -> SampleFunc:
+    if name == SampleAlgo.proportional.value: return propSample
+    elif name == SampleAlgo.constant.value: return constSample
+    else: raise Exception("Invalid Sample Algorithm")
+
+
+def constSample(nodes: List[Node], size: int) -> List[List[float]]:
+    samples = []
+    for node in nodes:
+        size = size
+        a, b = node.range()
+        samples.append(np.random.uniform(low=a, high=b, size=size))
+
+    return samples
+
+
+def propSample(nodes: List[Node], size: int) -> List[List[float]]:
     """
     sampleParams generates a set of uniformly distributed samples for each Node.
     The number of samples generated for each node is determined by its probability
@@ -21,7 +50,7 @@ def sampleParams(nodes: List[Node], size: int) -> List[List[float]]:
     """
     probs = compare(nodes)
     section_size = list(
-        map(lambda p: math.ceil(size * p), probs)
+        map(lambda p: math.ceil(size * p), probs) 
     )
     samples = []
     for idx, node in enumerate(nodes):
@@ -32,12 +61,12 @@ def sampleParams(nodes: List[Node], size: int) -> List[List[float]]:
     return samples
 
 
-def sampleError(
+def eval(
         evalFunction: Callable[[float], float],
         params: List[List[float]],
-    ) -> List[List[np.ndarray]]:
+    ) -> List[List[float]]:
     """
-    sampleError generates a set of samples for each node, evaluates each sample
+    eval generates a set of samples for each node, evaluates each sample
     using the provided evalFunction, and returns a list of lists containing the
     errors for each node's samples.
 
@@ -62,8 +91,13 @@ def sampleError(
 
 def updateNodes(nodes: List[Node], samples: List[List[np.ndarray]]) -> List[Node]:
     updated = []
+
     for idx, node in enumerate(nodes):
-        updated.append(node.updateDistribution(samples[idx]))
+        s = samples[idx]
+        if len(s) < 2:
+            logging.warn("sample size < 2")
+        
+        updated.append(node.updateDistribution(s))
 
     return updated
 
@@ -71,14 +105,19 @@ def updateNodes(nodes: List[Node], samples: List[List[np.ndarray]]) -> List[Node
 def step(
         nodes: List[Node],
         evalFunction: Callable[[float], float],
+        sample_algo: sample_algo=SampleAlgo.proportional,
         sample_size=30,
     ) -> List[Node]:
+    sfunc = sampleAlgoFromEnum(sample_algo)
+    
+    params = sfunc(nodes, sample_size)
+    output = eval(
+            evalFunction,
+            params
+    )
     nodes = updateNodes(
         nodes,
-        sampleError(
-            evalFunction,
-            sampleParams(nodes, sample_size)
-        )
+        output
     )
 
     next = []

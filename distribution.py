@@ -44,7 +44,7 @@ class Dist:
 
             return np.random.gamma(shape=shape, scale=scale, size=1)[0]
 
-        def sample_posterior_mean(samples: np.ndarray, var: float) -> float:
+        def sample_posterior_mean(samples: np.ndarray, var: float) -> float:            
             m = len(samples)
             precision = (m / var) + (1 / self.__mean.scale)
             mean = (
