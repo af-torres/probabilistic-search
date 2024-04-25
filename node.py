@@ -4,13 +4,18 @@ from typing import List, Tuple
 from distribution import Dist, compareDist
 import numpy as np
 
+
+TAINT_DO_NOT_SPLIT = "do_not_split"
+
 class Node:
     __region: Tuple[float, float]
     __dist: Dist
+    __taints: dict
 
     def __init__(self, dist: Dist, region: Tuple[float, float]):
         self.__dist = dist
         self.__region = region
+        self.__taints = {}
 
     def distribution(self) -> Dist: return self.__dist
 
@@ -28,6 +33,16 @@ class Node:
         )
     
     def range(self) -> Tuple[float, float]: return self.__region
+
+    def taint(self, key: str, val: any) -> bool:
+        self.__taints[key] = val
+        return True
+    
+    def getTaint(self, key) -> Tuple[any, bool]:
+        v = self.__taints.get(key, "")
+        if v == "":
+            return (v, False)
+        return (v, True)
 
 
 def compare(nodes: List[Node], sample_size=30)-> List[float]:

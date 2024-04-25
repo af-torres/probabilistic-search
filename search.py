@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 from typing import Callable, List, Literal
-from node import Node, compare
+from node import TAINT_DO_NOT_SPLIT, Node, compare
 
 
 class SampleAlgo(Enum):
@@ -49,6 +49,7 @@ def propSample(nodes: List[Node], size: int) -> List[List[float]]:
             distributed samples generated for a specific node.
     """
     probs = compare(nodes)
+    logging.info("total nodes with sufficient samples: %s", np.sum((np.array(probs) * size) > 2) )
     section_size = list(
         map(lambda p: math.ceil(size * p), probs) 
     )
@@ -96,6 +97,9 @@ def updateNodes(nodes: List[Node], samples: List[List[np.ndarray]]) -> List[Node
         s = samples[idx]
         if len(s) < 2:
             logging.warn("sample size < 2")
+            node.taint(TAINT_DO_NOT_SPLIT, True)
+            updated.append(node)
+            continue
         
         updated.append(node.updateDistribution(s))
 
@@ -122,6 +126,10 @@ def step(
 
     next = []
     for node in nodes:
+        if node.getTaint(TAINT_DO_NOT_SPLIT)[0] == True:
+            next = [*next, node]
+            continue
+
         next = [*next, *node.step()]
     
     return next

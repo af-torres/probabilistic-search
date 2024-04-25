@@ -1,18 +1,19 @@
 from __future__ import annotations
 
+import math
 from typing import List
 import numpy as np
 
 class Normal:
     loc: float
-    scale: float
+    scale: float # Variance
 
     def __init__(self, loc: float, scale: float):
         self.loc = loc
         self.scale = scale
 
     def sample(self, size: tuple | int) -> np.ndarray:
-        return np.random.normal(loc=self.loc, scale=self.scale, size=size)
+        return np.random.normal(loc=self.loc, scale=math.sqrt(self.scale), size=size)
 
 
 class Gamma:
@@ -48,10 +49,10 @@ class Dist:
             m = len(samples)
             precision = (m / var) + (1 / self.__mean.scale)
             mean = (
-                (np.mean(samples) * m / var) + (self.__mean.loc / self.__mean.scale)
+                (np.mean(samples) * (m / var)) + (self.__mean.loc / self.__mean.scale)
             ) / precision
             
-            return np.random.normal(loc=mean, scale=1/precision, size=1)[0]
+            return np.random.normal(loc=mean, scale=math.sqrt(1/precision), size=1)[0]
         
         # gibbs sampler
         posterior_sample_mean = []
