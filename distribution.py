@@ -94,7 +94,7 @@ class Dist:
         return Y_pred
 
 
-def compareDist(nodes: List[Dist], sample_size=30) -> List[float]:
+def compareDist(nodes: List[Dist], sample_size=10000) -> List[float]:
     """
     compare generates samples from the provided nodes and computes the probability
     of finding the global minimum within each node children links

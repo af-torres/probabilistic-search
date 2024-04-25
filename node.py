@@ -45,7 +45,7 @@ class Node:
         return (v, True)
 
 
-def compare(nodes: List[Node], sample_size=30)-> List[float]:
+def compare(nodes: List[Node], sample_size=10000)-> List[float]:
     """
     compare is a convenient wrapper for compareDist
     """

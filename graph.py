@@ -21,7 +21,7 @@ def draw_base(ax, J:search.EvalFunc, Jdescription: str):
         xlim=(0, 1),
         xticks=np.arange(0, 1.125, 0.125),
         ylim=(0, 1.5),
-        yticks=np.arange(0, 2, 0.25),
+        yticks=np.arange(0, round(np.max(y), 2) + .5, 0.25),
         title=Jdescription
     )
 
@@ -37,12 +37,15 @@ def init_graph(J: search.EvalFunc, Jdescription: str):
 
 
 def draw(nodes: List[Node], fig: Figure, ax: Axes, J: search.EvalFunc, Jdescription: str):
+    def get_liney(J):
+        x, y = eval_J(J)
+        return np.max(y) + .2
     def get_color(isMax, val):
         if val == 0: return "red"
         elif isMax : return "green"
         else: return "yellow"
     def get_fill_color(isMax, val):
-        if val == 0: return "indianred"
+        if val == 0: return "lightcoral"
         elif isMax: return "lightgreen"
         else: return "yellow"
 
@@ -50,18 +53,13 @@ def draw(nodes: List[Node], fig: Figure, ax: Axes, J: search.EvalFunc, Jdescript
     ax.cla()
     draw_base(ax, J, Jdescription)
 
-    prob = np.array(compare(nodes, 500))
+    prob = np.array(compare(nodes))
     maxIdx = np.argmax(prob)
-    orderedIdx = np.flip(np.argsort(prob))[:4] # ordered index by prob (decreasing)
-    zeros = np.argwhere(prob == 0).flatten()
-    paint = np.append(orderedIdx, zeros)
 
     offset = 0.005
-    liney = 1.45
-    for idx in paint:
+    liney = get_liney(J)
+    for idx, val in enumerate(prob):
         # TODO: add label of range and prob for min node
-        idx = int(idx)
-        val = prob[idx]
         node: Node = nodes[idx]
         low, high = node.range()
         fillx, filly = eval_J(J, low, high)
