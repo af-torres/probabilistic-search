@@ -15,7 +15,7 @@ class Config:
         self.sample_size = sample_size
 
 
-def main(config: Config):    
+def run(config: Config):    
     # init search space = [0, 1] with prior J ~ N(u, t),
     # where u ~ N(0,1) and t ~ inverse-gamma(0, 1)
     root = Node(Dist(Normal(0, 1), Gamma(2, 0.5)), (0., 1.))
@@ -59,6 +59,10 @@ to find the minimum of non differentiable functions with respect to their argume
     )
 
 
-if __name__ == "__main__":
+def main():
     config = parse_config()
-    main(config)
+    run(config)
+
+
+if __name__ == "__main__":
+    main()
