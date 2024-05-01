@@ -126,13 +126,13 @@ def step(
     sfunc = sampleAlgoFromEnum(sample_algo)
     
     params = sfunc(nodes, sample_size)
-    output = eval(
+    samples = eval(
             evalFunction,
             params
     )
     nodes = updateNodes(
         nodes,
-        output
+        samples
     )
 
     next = []
