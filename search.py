@@ -137,6 +137,8 @@ def step(
 
     next = []
     for node in nodes:
+        # when we do not have enough information on a node rage to generate
+        # a posterior distribution, we avoid creating a new partition over the space
         if node.getTaint(TAINT_DO_NOT_SPLIT)[0] == True:
             next = [*next, node]
             continue
