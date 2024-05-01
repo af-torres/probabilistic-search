@@ -91,6 +91,17 @@ def eval(
 
 
 def updateNodes(nodes: List[Node], samples: List[List[np.ndarray]]) -> List[Node]:
+    """
+    Update the posterior distribution of a list of nodes based on provided samples.
+    The 'samples' list is expected to be parallel to the 'nodes' list, meaning that the samples
+    in samples[i] are specifically intended for updating the posterior distribution of the node nodes[i].
+
+    If a node has less than two samples, it is marked with the TAINT_DO_NOT_SPLIT flag and excluded from updating
+    to avoid collapses in the variance (the variance of one sample is zero).
+
+    Returns:
+    - updated (List[Node]): A list of Node objects with updated posterior distributions.
+    """
     updated = []
 
     for idx, node in enumerate(nodes):
