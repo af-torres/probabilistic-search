@@ -2,9 +2,8 @@ import argparse
 from example_functions import examples
 from distribution import Dist, Normal, Gamma
 from node import Node
-from graph import init_graph, draw
 import search
-
+import plot
 
 class Config:
     sample_by: search.sample_algo
@@ -20,7 +19,9 @@ def totalEvaluations(algo: search.sample_algo, sample_size: int, totNodes: int, 
     if algo == search.SampleAlgo.proportional.value:
         return iters * sample_size
     elif algo == search.SampleAlgo.constant.value:
-        return totNodes * sample_size  + (totNodes / 2 * sample_size) # we double nodes on every iter
+        prev = iters > 1
+        curr = iters > 0
+        return curr * totNodes * sample_size  + (totNodes / 2 * sample_size) * prev # we double nodes on every iter
 
     return 0
 
@@ -38,14 +39,19 @@ def run(config: Config):
     sample_algo = config.sample_by
     
     # plot
-    fig, ax = init_graph(J, Jname)
+    fig, ax = plot.init(J, Jname)
     iters = 0
     while True:
         arg = input("continue? ('n' to exit): ")
         if arg == "n":
             break
         
-        draw(curr, fig, ax, J, Jname, totalEvaluations(sample_algo, sample_size, len(curr), iters))
+        plot.draw(
+            curr,
+            fig, ax,
+            J, Jname,
+            totalEvaluations(sample_algo, sample_size, len(curr), iters)
+        )
         curr = search.step(
             curr,
             J,

@@ -27,7 +27,7 @@ def draw_base(ax, J:search.EvalFunc, Jdescription: str):
     )
 
 
-def init_graph(J: search.EvalFunc, Jdescription: str):
+def init(J: search.EvalFunc, Jdescription: str):
     fig, ax = plt.subplots()
     draw_base(ax, J, Jdescription)
     fig.show()
