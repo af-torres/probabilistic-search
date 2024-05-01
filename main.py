@@ -65,7 +65,7 @@ def parse_config() -> Config:
     parser = argparse.ArgumentParser(
                     prog="Probabilistic Search",
                     description="""A search algorithm inspired by binary search that can be used
-to find the minimum of non differentiable functions with respect to their arguments.
+to find the minimum of any type of function (even non derivable).
 """)
     parser.add_argument("-a", "--sample_algo",
                         default="proportional",
