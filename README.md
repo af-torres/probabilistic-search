@@ -6,9 +6,6 @@
 
 > code: [https://github.com/af-torres/probabilistic-search](https://github.com/af-torres/probabilistic-search)
 
-### Abstract
-This is a brief summary of your research paper.
-
 ## 1. Introduction
 
 In recent years, the number of parameters used in statistical models has grown into the billions. Training these models is an expensive procedure that companies seek to optimize. During training, the most costly step is tuning the model's hyper-parameters. The function that describes the relation between hyper-parameters and the loss function of the model is non-differentiable, thus, researchers are constrain to the use black-box optimization methods that do not rely on derivation, like stochastic search and population algorithms.
