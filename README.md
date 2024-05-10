@@ -31,7 +31,7 @@ Let's delve into optimizing a statistical model's hyperparameter, $\lambda$, by 
 
 $$
 \begin{align}
-    \underset{\lambda \in \mathbb{R} \: \mid \: 0 \leq \lambda \leq 1}{\operatorname{argmin}} J(\lambda)
+    \underset{\lambda \in \mathbb{R} \: \mid \: 0 \leq \lambda \leq 1}{\mathop{\text{{argmin}}}} J(\lambda)
 \end{align}
 $$
 
@@ -57,7 +57,7 @@ These probabilistic assumptions allow us to capture uncertainty in our model par
 
 $$
 \begin{equation}
-    \underset{x_{1,i}, x_{2,i}}{\operatorname{argmin}} \; E[Y(x_{1,i}, x_{2,i}) \mid x_{1,i}, x_{2,i}]
+    \underset{x_{1,i}, x_{2,i}}{\mathop{\text{{argmin}}}} \; E[Y(x_{1,i}, x_{2,i}) \mid x_{1,i}, x_{2,i}]
 \end{equation}
 $$
 
